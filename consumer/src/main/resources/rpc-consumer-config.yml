@@ -1,0 +1,16 @@
+# 注册中心地址
+registry:
+  enabled: true
+  type: nacos # 注册中心类型 暂时只支持 nacos
+  server: 127.0.0.1
+  port: 8848
+  # 负载均衡策略  需继承org.noexcept.loadBalance.AbstractLoadBalance
+  loadBalancer: org.noexcept.loadBalance.impl.RandomBalance
+  # 服务名称
+  serviceName: rpc-public
+
+# 当注册中心不存在时，会使用下面的地址
+provider:
+  server: 127.0.0.1
+  port: 8007
+

@@ -1,0 +1,19 @@
+syntax = "proto3";
+option java_outer_classname="Message";
+
+message MessageEntity {
+
+  string interfaceName = 1;
+
+  string methodName = 2;
+
+  string returnType = 3;
+
+  repeated string parameterTypes = 4;
+
+  repeated string parameterValues = 5;
+
+
+
+
+}
