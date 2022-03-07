@@ -4,14 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.noexcept</groupId>
+    <groupId>org.noexcs</groupId>
     <artifactId>rpc-framework</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>provider</module>
-        <module>consumer</module>
+        <module>provider-server</module>
+        <module>consumer-client</module>
         <module>rpc-common</module>
+        <module>rpc-consumer-example</module>
+        <module>rpc-provider-example</module>
     </modules>
 
     <name>rpc-framework</name>

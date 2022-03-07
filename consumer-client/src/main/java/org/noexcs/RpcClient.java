@@ -104,7 +104,7 @@ public class RpcClient {
             NioEventLoopGroup group = new NioEventLoopGroup();
             ClientHandler messageHandler = new ClientHandler();
             RpcMessageCodec rpcMessageCodec = new RpcMessageCodec();
-            LoggingHandler loggingHandler = new LoggingHandler(LogLevel.DEBUG);
+            LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
             try {
                 Bootstrap b = new Bootstrap();
                 b.group(group)
@@ -114,7 +114,7 @@ public class RpcClient {
                             @Override
                             protected void initChannel(SocketChannel channel) {
                                 ChannelPipeline pipeline = channel.pipeline();
-                                pipeline.addLast(new LengthFieldBasedFrameDecoder(1024, 0, 4, 0, 0));
+                                pipeline.addLast(new LengthFieldBasedFrameDecoder(10240, 0, 4, 0, 0));
                                 pipeline.addLast(loggingHandler);
                                 pipeline.addLast(rpcMessageCodec);
                                 pipeline.addLast(messageHandler);

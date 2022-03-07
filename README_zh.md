@@ -1,16 +1,16 @@
 # RPC-framework
 
-#### Description
-A simple, lightweight, Java based remote method invoke framework.
+#### 介绍
+
+一个简易的，轻量级的，Java远程调用框架。
+
+#### 软件架构
+软件架构说明
 
 
-#### Software Architecture
-Software architecture description
+#### 安装教程
 
-#### Installation
-
-
-1. rpc Server side: add this maven dependency
+1. rpc服务器端引入以下maven坐标
     ```xml
        <dependencies>
             <dependency>
@@ -20,23 +20,22 @@ Software architecture description
             </dependency>
         </dependencies>
     ```
-   Add Server side configuration file：`rpc-provider-config.yaml`
+   添加服务端配置文件：`rpc-provider-config.yaml`
     ```yaml
-    # Server side IP and Port
+    # 本地服务地址端口
     server:
       host: "localhost"
       port: 8007
     
-   # Register center address.
-   # It will register service to the register center if enabled.
+   # 注册中心地址，如果开启的话就会向注册中心注册服务
     registry:
       enabled: false
       server: 127.0.0.1
       port: 8848
-      # service name
+      # 提供服务名称
       serviceName: rpc-public
     ```
-2. rpc client side add this maven dependency
+2. rpc客户端引入以下maven坐标
    ```xml
        <dependencies>
             <dependency>
@@ -46,32 +45,30 @@ Software architecture description
             </dependency>
         </dependencies>
    ```
-   Add client side configuration file：`rpc-consumer-config.yml`
+   添加客户端配置文件：`rpc-consumer-config.yml`
     ```yaml
-    # Connect to the server directly
-    # rpc server address
+    # 直接连接服务端，服务端地址
     provider:
       server: 127.0.0.1
       port: 8007
    
-   # register center address
-   # It will discover service from register center if enabled
+   # 注册中心地址，如果开启的话就会向注册中心发现服务
     registry:
       enabled: false
-      type: nacos # register center type, only support nacos temporarily
-      serviceName: rpc-public  # service name
+      type: nacos # 注册中心类型 暂时只支持 nacos
+      serviceName: rpc-public  # 服务名称
       server: 127.0.0.1
       port: 8848
-      # load balance strategy: must extend org.noexcs.loadBalance.AbstractLoadBalance
+      # 负载均衡策略  需继承org.noexcs.loadBalance.AbstractLoadBalance
       loadBalancer: org.noexcs.loadBalance.impl.RandomBalance
+
     ```
 
+#### 使用说明
 
-#### Instructions
+1. 服务端
 
-1. Server side
-
-   Define rpc service using class, and annotated with `@Service`
+   以类的方式定义rpc服务，并使用`@Service`注解标注为Rpc服务:
     ```java
    import org.springframework.stereotype.Service;
    
@@ -84,7 +81,7 @@ Software architecture description
    
     }
     ```
-   Start Server：
+   启动服务：
    ```java
    public class ServerMain {
        public static void main(String[] args) {
@@ -92,9 +89,9 @@ Software architecture description
        }
    }
    ```
-2. Client side
+2. 客户端
 
-   Write service interface correspondingly
+   以服务端定义的服务编写对应的接口：
     ```java
     public interface StringUppercaseService {
     
@@ -102,10 +99,10 @@ Software architecture description
    
     }
     ```
-   > interface's full qualified name must as same as Server side's service class
-   > and the method you invoke should also have a same name and parameter list
+   > 接口的全限定名需要与服务端保持一致，所调用的方法也要与服务端保持一致（包括方法名，形参列表）
+   > 
 
-   invoke service：
+   调用服务：
    ```java
    public class ConsumerMain {
        public static void main(String[] args) {
@@ -116,9 +113,10 @@ Software architecture description
    }
    ```
 
-#### Contribution
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+#### 参与贡献
+
+1.  Fork 本仓库
+2.  新建 Feat_xxx 分支
+3.  提交代码
+4.  新建 Pull Request

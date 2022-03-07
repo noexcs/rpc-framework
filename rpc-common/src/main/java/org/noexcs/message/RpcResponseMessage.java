@@ -34,4 +34,12 @@ public class RpcResponseMessage extends RpcMessage {
     public void setExceptionValue(Exception exceptionValue) {
         this.exceptionValue = exceptionValue;
     }
+
+    @Override
+    public String toString() {
+        return "RpcResponseMessage{" +
+                "returnValue=" + returnValue +
+                ", exceptionValue=" + exceptionValue +
+                '}';
+    }
 }

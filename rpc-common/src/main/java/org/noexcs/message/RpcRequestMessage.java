@@ -1,5 +1,7 @@
 package org.noexcs.message;
 
+import java.util.Arrays;
+
 /**
  * @author com.noexcept
  */
@@ -62,5 +64,16 @@ public class RpcRequestMessage extends RpcMessage {
 
     public void setParameterValue(Object[] parameterValue) {
         this.parameterValue = parameterValue;
+    }
+
+    @Override
+    public String toString() {
+        return "RpcRequestMessage{" +
+                "interfaceName='" + interfaceName + '\'' +
+                ", methodName='" + methodName + '\'' +
+                ", returnType=" + returnType +
+                ", parameterTypes=" + Arrays.toString(parameterTypes) +
+                ", parameterValue=" + Arrays.toString(parameterValue) +
+                '}';
     }
 }

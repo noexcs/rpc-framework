@@ -20,4 +20,11 @@ public class RpcMessage implements Serializable {
     public int getSequenceId() {
         return sequenceId;
     }
+
+    @Override
+    public String toString() {
+        return "RpcMessage{" +
+                "sequenceId=" + sequenceId +
+                '}';
+    }
 }

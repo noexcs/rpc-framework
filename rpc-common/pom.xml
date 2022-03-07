@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>rpc-framework</artifactId>
-        <groupId>org.noexcept</groupId>
+        <groupId>org.noexcs</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 

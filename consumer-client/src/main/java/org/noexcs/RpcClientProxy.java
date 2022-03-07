@@ -53,6 +53,9 @@ public class RpcClientProxy extends ChannelInboundHandlerAdapter {
             RpcResponseMessage response = future.get();
 
             RpcClient.setNextProviderAddress(channel);
+            if (response.getReturnValue()==null){
+                throw new RuntimeException(response.getExceptionValue().getMessage());
+            }
             return response.getReturnValue();
         });
     }

@@ -23,6 +23,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<RpcMessage
         RpcRequestMessage requestMessage = (RpcRequestMessage) msg;
         SocketAddress remoteAddress = ctx.channel().remoteAddress();
 
+        log.info("收到调用请求，接口名：{}，方法名：{}", requestMessage.getInterfaceName(), requestMessage.getMethodName());
+
         String className = requestMessage.getInterfaceName();
         Class<?> clazz = Class.forName(className);
 
@@ -31,7 +33,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<RpcMessage
         responseMessage = new RpcResponseMessage(requestMessage.getSequenceId(), null, null);
         try {
             Object serviceImpl = ServiceContainer.getServiceImpl(clazz);
-            Method method = clazz.getMethod(requestMessage.getMethodName(), requestMessage.getParameterTypes());
+            Method method = clazz.getDeclaredMethod(requestMessage.getMethodName(), requestMessage.getParameterTypes());
+            method.setAccessible(true);
             result = method.invoke(serviceImpl, requestMessage.getParameterValue());
             responseMessage.setReturnValue(result);
             log.debug("Received a rpc call: {}#{} {}", className, requestMessage.getMethodName(), remoteAddress);
@@ -41,6 +44,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<RpcMessage
             responseMessage.setExceptionValue(new Exception(e.getMessage()));
         }
         ctx.channel().writeAndFlush(responseMessage);
+        log.info("返回结果：{}", responseMessage);
         System.out.println(responseMessage);
     }
 

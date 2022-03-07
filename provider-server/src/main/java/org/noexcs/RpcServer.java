@@ -9,6 +9,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.noexcs.codec.RpcMessageCodec;
@@ -26,8 +27,10 @@ import java.net.InetSocketAddress;
 @Slf4j
 public class RpcServer {
 
-    public static void start() {
+    public static void start(Class<?> mainClass) {
+        String basePackage = mainClass.getPackage().getName();
         log.debug("rpc server starting...");
+        ServiceContainer.initApplicationContext(basePackage);
         ApplicationContext context = ServiceContainer.getApplicationContext();
         SpringContextConfig contextConfig = context.getBean(SpringContextConfig.class);
         new RpcServer().run(contextConfig.getHost(),contextConfig.getPort());
@@ -39,7 +42,7 @@ public class RpcServer {
 
         ServerChannelHandler serverChannelHandler = new ServerChannelHandler();
         RpcMessageCodec rpcMessageCodec = new RpcMessageCodec();
-        LoggingHandler loggingHandler = new LoggingHandler();
+        LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -49,7 +52,7 @@ public class RpcServer {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pipeline = socketChannel.pipeline();
-                            pipeline.addLast(new LengthFieldBasedFrameDecoder(1024,0,4,0,0));
+                            pipeline.addLast(new LengthFieldBasedFrameDecoder(10240,0,4,0,0));
                             pipeline.addLast(loggingHandler);
                             pipeline.addLast(rpcMessageCodec);
                             pipeline.addLast(serverChannelHandler);
@@ -57,7 +60,7 @@ public class RpcServer {
                     });
 
             ChannelFuture channelFuture = b.bind(host, port).sync();
-            log.debug("rpc server started at {}:{}!",host,port);
+            log.info("rpc server started at {}:{}!",host,port);
 
             SpringContextConfig contextConfig = ServiceContainer.getApplicationContext().getBean(SpringContextConfig.class);
             Boolean registryEnabled = contextConfig.getRegistryEnabled();
