@@ -23,8 +23,6 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<RpcMessage
         RpcRequestMessage requestMessage = (RpcRequestMessage) msg;
         SocketAddress remoteAddress = ctx.channel().remoteAddress();
 
-        log.info("收到调用请求，接口名：{}，方法名：{}", requestMessage.getInterfaceName(), requestMessage.getMethodName());
-
         String className = requestMessage.getInterfaceName();
         Class<?> clazz = Class.forName(className);
 
@@ -37,20 +35,19 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<RpcMessage
             method.setAccessible(true);
             result = method.invoke(serviceImpl, requestMessage.getParameterValue());
             responseMessage.setReturnValue(result);
-            log.debug("Received a rpc call: {}#{} {}", className, requestMessage.getMethodName(), remoteAddress);
-            log.debug("Returned {}", result.toString());
+            log.info("Received a rpc call: {}#{} {}", className, requestMessage.getMethodName(), remoteAddress);
         } catch (NoSuchMethodException | SecurityException | InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
             e.printStackTrace();
             responseMessage.setExceptionValue(new Exception(e.getMessage()));
         }
         ctx.channel().writeAndFlush(responseMessage);
-        log.info("返回结果：{}", responseMessage);
+        log.info("Returned {}", responseMessage);
         System.out.println(responseMessage);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
-        System.out.println("ServerChannelHandler.exceptionCaught");
+        log.info(cause.getMessage());
     }
 }

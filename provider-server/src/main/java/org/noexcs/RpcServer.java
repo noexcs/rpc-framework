@@ -42,7 +42,6 @@ public class RpcServer {
 
         ServerChannelHandler serverChannelHandler = new ServerChannelHandler();
         RpcMessageCodec rpcMessageCodec = new RpcMessageCodec();
-        LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -53,7 +52,6 @@ public class RpcServer {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pipeline = socketChannel.pipeline();
                             pipeline.addLast(new LengthFieldBasedFrameDecoder(10240,0,4,0,0));
-                            pipeline.addLast(loggingHandler);
                             pipeline.addLast(rpcMessageCodec);
                             pipeline.addLast(serverChannelHandler);
                         }

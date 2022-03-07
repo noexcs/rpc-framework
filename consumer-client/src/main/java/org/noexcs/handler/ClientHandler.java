@@ -16,7 +16,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<RpcResponseMessag
     public static ConcurrentHashMap<Integer, CompletableFuture<RpcResponseMessage>> RcpResponses = new ConcurrentHashMap<>();
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, RpcResponseMessage msg) throws Exception {
+    public void channelRead0(ChannelHandlerContext ctx, RpcResponseMessage msg) {
         CompletableFuture<RpcResponseMessage> completableFuture = RcpResponses.remove(msg.getSequenceId());
         completableFuture.complete(msg);
     }

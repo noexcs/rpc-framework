@@ -10,8 +10,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class ServiceContainer {
 
-    //    private static final ApplicationContext APPLICATION_CONTEXT = new AnnotationConfigApplicationContext(SpringContextConfig.class);
-    private static ApplicationContext APPLICATION_CONTEXT = null;
+    private static volatile ApplicationContext APPLICATION_CONTEXT = null;
 
     public static ApplicationContext getApplicationContext() {
         return APPLICATION_CONTEXT;

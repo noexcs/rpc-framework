@@ -13,9 +13,9 @@ import java.net.InetSocketAddress;
  */
 public class NacosServiceRegistryImpl implements ServiceRegistry {
 
-    private String registryServer;
+    private final String registryServer;
 
-    private Integer registryServerPort;
+    private final Integer registryServerPort;
 
     public NacosServiceRegistryImpl(String registryServer, Integer registryServerPort) {
         this.registryServer = registryServer;

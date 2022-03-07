@@ -26,21 +26,6 @@ public class RpcClientProxy extends ChannelInboundHandlerAdapter {
 
     @SuppressWarnings("unchecked")
     public <T> T getProxy(final Class<T> clazz) {
-//        Enhancer enhancer = new Enhancer();
-//        enhancer.setSuperclass(clazz);
-//        enhancer.setCallback((MethodInterceptor) (proxy, method, args, methodProxy) -> {
-//            int sequenceId = ID.getAndIncrement();
-//            RpcRequestMessage rpcRequestMessage = new RpcRequestMessage(sequenceId, clazz.getName(), method.getName(), method.getReturnType(), method.getParameterTypes(), args);
-//            Channel channel = RpcClient.getChannel();
-//            channel.writeAndFlush(rpcRequestMessage);
-//            CompletableFuture<RpcResponseMessage> future = new CompletableFuture<>();
-//            ClientHandler.RcpResponses.put(sequenceId, future);
-//
-//            RpcResponseMessage response = future.get();
-//
-//            return response.getReturnValue();
-//        });
-//        return ((T) enhancer.create());
         return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{clazz}, (proxy, method, args) -> {
             int sequenceId = ID.getAndIncrement();
             RpcRequestMessage rpcRequestMessage = new RpcRequestMessage(sequenceId, clazz.getName(), method.getName(), method.getReturnType(), method.getParameterTypes(), args);

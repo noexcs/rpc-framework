@@ -18,13 +18,9 @@ import java.util.List;
 @Slf4j
 public class NacosServiceDiscoverImpl implements ServiceDiscover {
 
-    static String  serverIP = "127.0.0.1";
+    static String serverIP = "127.0.0.1";
 
     static String port = "8848";
-
-    static {
-    }
-
 
     @Override
     public List<InetSocketAddress> discoverService(String serviceName) {
@@ -34,13 +30,13 @@ public class NacosServiceDiscoverImpl implements ServiceDiscover {
             NamingService service = NamingFactory.createNamingService(serverIP + ":" + port);
             List<Instance> allInstances = service.getAllInstances(serviceName);
             addresses = new ArrayList<>(allInstances.size());
-            log.debug("发现{}服务{}个", serviceName, allInstances.size());
+            log.info("Discovered {} {} service!", allInstances.size(), serviceName);
             for (Instance instance : allInstances) {
                 addresses.add(new InetSocketAddress(instance.getIp(), instance.getPort()));
-                log.debug("{}", instance);
+                log.info("{}", instance);
             }
         } catch (NacosException e) {
-            log.error("未发现任何{}服务！", serviceName);
+            log.info("No {} service discovered!", serviceName);
             e.printStackTrace();
         }
         return addresses;

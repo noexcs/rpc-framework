@@ -17,7 +17,6 @@ import java.util.Properties;
  * @since 1/17/2022 5:43 PM
  */
 @Configuration
-@ComponentScan("org.noexcs.service")
 @ComponentScan()
 @PropertySource(value = "classpath:rpc-provider-config.yaml", factory = SpringContextConfig.YamlPropertyFactory.class)
 @Data

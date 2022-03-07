@@ -28,7 +28,7 @@ public interface Serializer {
                     ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
                     return (T) ois.readObject();
                 } catch (IOException | ClassNotFoundException e) {
-                    throw new RuntimeException("反序列化失败", e);
+                    throw new RuntimeException("Deserialize failed!", e);
                 }
             }
 
@@ -40,7 +40,7 @@ public interface Serializer {
                     oos.writeObject(object);
                     return bos.toByteArray();
                 } catch (IOException e) {
-                    throw new RuntimeException("序列化失败", e);
+                    throw new RuntimeException("Serialize failed!", e);
                 }
             }
         },
@@ -77,9 +77,8 @@ public interface Serializer {
             }
         }
 
-        @Override             //   String.class
+        @Override
         public JsonElement serialize(Class<?> src, Type typeOfSrc, JsonSerializationContext context) {
-            // class -> json
             return new JsonPrimitive(src.getName());
         }
     }
