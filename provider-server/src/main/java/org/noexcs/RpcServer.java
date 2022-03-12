@@ -9,8 +9,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.noexcs.codec.RpcMessageCodec;
 import org.noexcs.config.SpringContextConfig;
@@ -22,7 +20,7 @@ import java.net.InetSocketAddress;
 
 /**
  * Hello world!
- * @author com.noexcept
+ * @author noexcs
  */
 @Slf4j
 public class RpcServer {
@@ -33,10 +31,21 @@ public class RpcServer {
         ServiceContainer.initApplicationContext(basePackage);
         ApplicationContext context = ServiceContainer.getApplicationContext();
         SpringContextConfig contextConfig = context.getBean(SpringContextConfig.class);
-        new RpcServer().run(contextConfig.getHost(),contextConfig.getPort());
+        new RpcServer().run(contextConfig.getHost(), contextConfig.getPort());
     }
 
-    public void run(String host, int port) {
+    public static void startBackground(Class<?> mainClass, boolean daemon) {
+        String basePackage = mainClass.getPackage().getName();
+        ServiceContainer.initApplicationContext(basePackage);
+        ApplicationContext context = ServiceContainer.getApplicationContext();
+        SpringContextConfig contextConfig = context.getBean(SpringContextConfig.class);
+        Thread rpcService = new Thread(() ->
+                new RpcServer().run(contextConfig.getHost(), contextConfig.getPort()), "rpc");
+        rpcService.setDaemon(daemon);
+        rpcService.start();
+    }
+
+    private void run(String host, int port) {
         NioEventLoopGroup bossGroup = new NioEventLoopGroup(1);
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -51,14 +60,14 @@ public class RpcServer {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pipeline = socketChannel.pipeline();
-                            pipeline.addLast(new LengthFieldBasedFrameDecoder(10240,0,4,0,0));
+                            pipeline.addLast(new LengthFieldBasedFrameDecoder(10240, 0, 4, 0, 0));
                             pipeline.addLast(rpcMessageCodec);
                             pipeline.addLast(serverChannelHandler);
                         }
                     });
 
             ChannelFuture channelFuture = b.bind(host, port).sync();
-            log.info("rpc server started at {}:{}!",host,port);
+            log.info("rpc server started at {}:{}!", host, port);
 
             SpringContextConfig contextConfig = ServiceContainer.getApplicationContext().getBean(SpringContextConfig.class);
             Boolean registryEnabled = contextConfig.getRegistryEnabled();
@@ -70,9 +79,9 @@ public class RpcServer {
                 }
                 String registryServer = contextConfig.getRegistryServer();
                 Integer registryServerPort = contextConfig.getRegistryServerPort();
-                InetSocketAddress inetSocketAddress = new InetSocketAddress(host,port);
-                if (new NacosServiceRegistryImpl(registryServer,registryServerPort).registerService(serviceName, inetSocketAddress)) {
-                    log.debug("rpc service has been registered to {} [{}:{}]","nacos", registryServer, registryServerPort);
+                InetSocketAddress inetSocketAddress = new InetSocketAddress(host, port);
+                if (new NacosServiceRegistryImpl(registryServer, registryServerPort).registerService(serviceName, inetSocketAddress)) {
+                    log.debug("rpc service has been registered to {} [{}:{}]", "nacos", registryServer, registryServerPort);
                 }
             }
 
