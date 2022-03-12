@@ -88,7 +88,8 @@ Software architecture description
    ```java
    public class ServerMain {
        public static void main(String[] args) {
-           RpcServer.start(ServerMain.class);
+            RpcServer.startBackground(ServerMain.class, true);
+            new CountDownLatch(1).await();
        }
    }
    ```
@@ -115,6 +116,76 @@ Software architecture description
        }
    }
    ```
+
+
+#### Client integrates with Spring Boot
+1. Import following maven dependency：
+   ```xml
+       <dependencies>
+           <dependency>
+               <groupId>org.noexcs</groupId>
+               <artifactId>rpc-noexcs-spring-boot-starter</artifactId>
+               <version>1.0</version>
+           </dependency>
+           <!-- Spring 相关依赖 -->
+       </dependencies>
+   ```
+
+2. Configure some rpc server info in application.yml：
+   ```yaml
+   spring:
+     noexcs:
+       rpc:
+         provider:
+           server: 127.0.0.1
+           port: 8007
+         retries: 1
+         timed-out: 2
+   ```
+   
+3. Write rpc service interface code, and annotated with @RpcService. The interfaces' package should be in the package that Spring Boot default scan package：
+   ```java
+   package org.noexcs.service;
+   
+   import org.noexcs.spring.boot.autoconfigure.RpcService;
+   
+   @RpcService
+   public interface StringUpperCaseService {
+   
+       String upperCaseString(String s);
+   }   
+   ```
+
+4. Call rpc service through Controller：
+   ```java
+   package org.noexcs.controller;
+   
+   import org.noexcs.service.StringUpperCaseService;
+   import org.springframework.beans.factory.annotation.Autowired;
+   import org.springframework.web.bind.annotation.GetMapping;
+   import org.springframework.web.bind.annotation.RestController;
+
+   @RestController
+   public class Controller {
+       
+       StringUpperCaseService stringUpperCaseService;
+   
+       @GetMapping("/rpcTest")
+       public String testService(){
+           return stringUpperCaseService.upperCaseString("hello");
+       }
+   
+       @Autowired
+       public void setStringUpperCaseService(StringUpperCaseService stringUpperCaseService) {
+           this.stringUpperCaseService = stringUpperCaseService;
+       }
+   }   
+   ```
+
+5. Starting rpc server and this Spring Boot client, test the api works.
+
+   ![SpringBootIntegrationTestResult](./images/SpringBootIntegrationTestResult.jpg)
+
 
 #### Contribution
 

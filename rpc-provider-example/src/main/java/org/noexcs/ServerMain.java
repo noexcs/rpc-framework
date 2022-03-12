@@ -9,7 +9,6 @@ import java.util.concurrent.CountDownLatch;
 public class ServerMain {
     public static void main(String[] args) throws InterruptedException {
         RpcServer.startBackground(ServerMain.class, true);
-        System.out.println("服务器已启动");
         new CountDownLatch(1).await();
     }
 }

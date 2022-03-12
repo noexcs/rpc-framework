@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @author noexcept
+ * @author noexcs
  * @since 1/17/2022 2:16 PM
  */
 @Slf4j
@@ -34,6 +34,10 @@ public class Config {
     static String providerServer;
 
     static Integer providerPort;
+
+    static Integer timedOut;
+
+    static Integer retries;
 
     public static Boolean getHasRegistry() {
         return hasRegistry;
@@ -64,6 +68,14 @@ public class Config {
 
             Map registryMap = (Map) configs.get("registry");
 
+            timedOut = (Integer) configs.get("timed-out");
+            retries = (Integer) configs.get("retries");
+            if (timedOut == null) {
+                timedOut = -1;
+            }
+            if (retries == null) {
+                retries = 1;
+            }
             if (registryMap != null && registryMap.get("enabled") != null && ((Boolean) registryMap.get("enabled"))) {
                 hasRegistry = true;
                 log.debug("Service registry and discover enabled.");

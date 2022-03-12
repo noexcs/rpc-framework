@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author com.noexcept
+ * @author noexcs
  * @since 1/10/2022 12:39 AM
  */
 public class ClientHandler extends SimpleChannelInboundHandler<RpcResponseMessage> {

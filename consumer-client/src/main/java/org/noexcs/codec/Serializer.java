@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author com.noexcept
+ * @author noexcs
  * @since 1/17/2022 4:34 PM
  */
 public interface Serializer {

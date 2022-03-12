@@ -10,7 +10,7 @@ import org.noexcs.message.RpcResponseMessage;
 import java.util.List;
 
 /**
- * @author com.noexcept
+ * @author noexcs
  * @since 1/17/2022 3:56 PM
  */
 public class RpcMessageCodec extends MessageToMessageCodec<ByteBuf, RpcMessage> {

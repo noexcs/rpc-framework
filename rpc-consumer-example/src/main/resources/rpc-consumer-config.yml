@@ -14,3 +14,5 @@ provider:
   server: 127.0.0.1
   port: 8007
 
+timed-out: 3 # 超时时间设置（单位秒）, -1不超时，默认-1
+retries: 3 # 失败重试次数，默认1

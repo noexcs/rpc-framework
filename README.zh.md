@@ -16,7 +16,7 @@
             <dependency>
                 <groupId>org.noexcs</groupId>
                 <artifactId>rpc-provider-server</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0</version>
             </dependency>
         </dependencies>
     ```
@@ -41,7 +41,7 @@
             <dependency>
                 <groupId>org.noexcs</groupId>
                 <artifactId>rpc-consumer-client</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0</version>
             </dependency>
         </dependencies>
    ```
@@ -85,7 +85,8 @@
    ```java
    public class ServerMain {
        public static void main(String[] args) {
-           RpcServer.start(ServerMain.class);
+            RpcServer.startBackground(ServerMain.class, true);
+            new CountDownLatch(1).await();
        }
    }
    ```
@@ -113,6 +114,73 @@
    }
    ```
 
+#### 客户端与Spring Boot集成
+   1. pom文件引入starter依赖：
+   ```xml
+       <dependencies>
+           <dependency>
+               <groupId>org.noexcs</groupId>
+               <artifactId>rpc-noexcs-spring-boot-starter</artifactId>
+               <version>1.0</version>
+           </dependency>
+           <!-- Spring 相关依赖 -->
+       </dependencies>
+   ```
+
+   2. 配置rpc相关配置：
+   ```yaml
+   spring:
+     noexcs:
+       rpc:
+         provider:
+           server: 127.0.0.1
+           port: 8007
+         retries: 1
+         timed-out: 2
+   ```
+
+   3.创建Rpc服务,这个服务的所处包的位置应该在Spring Boot的主启动类所处的包之下：
+   ```java
+   package org.noexcs.service;
+   
+   import org.noexcs.spring.boot.autoconfigure.RpcService;
+   
+   @RpcService
+   public interface StringUpperCaseService {
+   
+       String upperCaseString(String s);
+   }   
+   ```
+
+   4. Controller层调用：
+   ```java
+   package org.noexcs.controller;
+   
+   import org.noexcs.service.StringUpperCaseService;
+   import org.springframework.beans.factory.annotation.Autowired;
+   import org.springframework.web.bind.annotation.GetMapping;
+   import org.springframework.web.bind.annotation.RestController;
+
+   @RestController
+   public class Controller {
+       
+       StringUpperCaseService stringUpperCaseService;
+   
+       @GetMapping("/rpcTest")
+       public String testService(){
+           return stringUpperCaseService.upperCaseString("hello");
+       }
+   
+       @Autowired
+       public void setStringUpperCaseService(StringUpperCaseService stringUpperCaseService) {
+           this.stringUpperCaseService = stringUpperCaseService;
+       }
+   }   
+   ```
+
+   5. 启动服务端及Spring Boot客户端并测试，结果如下
+
+   ![SpringBootIntegrationTestResult](./images/SpringBootIntegrationTestResult.jpg)
 
 #### 参与贡献
 

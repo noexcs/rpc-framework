@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "spring.noexcs.rpc.provider.server",
+      "type": "java.lang.String",
+      "description": "rpc provider host.",
+      "defaultValue": "127.0.0.1"
+    },
+    {
+      "name": "spring.noexcs.rpc.provider.port",
+      "type": "java.lang.Integer",
+      "description": "rpc provider port.",
+      "defaultValue": 8007
+    }
+  ]
+}

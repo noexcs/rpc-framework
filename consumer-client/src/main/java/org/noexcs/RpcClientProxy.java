@@ -2,6 +2,7 @@ package org.noexcs;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import lombok.extern.slf4j.Slf4j;
 import org.noexcs.handler.ClientHandler;
 import org.noexcs.message.RpcRequestMessage;
 import org.noexcs.message.RpcResponseMessage;
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author com.noexcept
  * @since 1/10/2022 11:06 AM
  */
+@Slf4j
 public class RpcClientProxy extends ChannelInboundHandlerAdapter {
 
     private static final AtomicInteger ID = new AtomicInteger();
@@ -35,11 +37,18 @@ public class RpcClientProxy extends ChannelInboundHandlerAdapter {
             ClientHandler.RcpResponses.put(sequenceId, future);
             channel.writeAndFlush(rpcRequestMessage);
 
-            RpcResponseMessage response = future.get();
+            RpcResponseMessage response;
+            try {
+                response = future.get(3, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                log.info("rpc request timed out: {}.{}", clazz.getName(), method.getName());
+                return null;
+            }
 
             RpcClient.setNextProviderAddress(channel);
-            if (response.getReturnValue()==null){
-                throw new RuntimeException(response.getExceptionValue().getMessage());
+            if (response.getReturnValue() == null) {
+                log.error(response.getExceptionValue().getMessage());
+                return null;
             }
             return response.getReturnValue();
         });

@@ -14,6 +14,9 @@
         <module>rpc-common</module>
         <module>rpc-consumer-example</module>
         <module>rpc-provider-example</module>
+        <module>rpc-noexcs-spring-boot-autoconfiguration</module>
+        <module>rpc-noxecs-spring-boot-starter</module>
+        <module>rpc-noexcs-spring</module>
     </modules>
 
     <name>rpc-framework</name>
