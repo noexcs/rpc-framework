@@ -16,3 +16,4 @@ provider:
 
 timed-out: 3 # 超时时间设置（单位秒）, -1不超时，默认-1
 retries: 3 # 失败重试次数，默认1
+serializer: org.noexcs.codec.Impl.HessianSerializer # 序列化方式类名，HessianSerializer为默认，需实现org.noexcs.codec.Serializer接口

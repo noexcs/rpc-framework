@@ -24,6 +24,11 @@ public class RpcProperties {
     Registry registry;
 
     /**
+     * serializer class name
+     */
+    String serializer;
+
+    /**
      * rpc provider info which will be used when registry not enabled
      */
     RpcProvider provider;

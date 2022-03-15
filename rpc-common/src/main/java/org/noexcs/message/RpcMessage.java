@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author com.noexcept
  * @since 1/17/2022 3:58 PM
  */
-public class RpcMessage implements Serializable {
+public abstract class RpcMessage implements Serializable {
 
     public static AtomicInteger ID = new AtomicInteger();
 

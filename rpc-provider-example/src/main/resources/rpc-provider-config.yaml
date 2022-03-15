@@ -10,3 +10,6 @@ registry:
   port: 8848
   # 提供服务名称
   serviceName: rpc-public
+
+# 序列化方式的类，默认HessianSerializer，需实现org.noexcs.codec.Serializer接口
+serializerClass: org.noexcs.codec.Impl.HessianSerializer

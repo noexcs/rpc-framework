@@ -15,8 +15,6 @@
         <module>rpc-consumer-example</module>
         <module>rpc-provider-example</module>
         <module>rpc-noexcs-spring-boot-autoconfiguration</module>
-        <module>rpc-noxecs-spring-boot-starter</module>
-        <module>rpc-noexcs-spring</module>
     </modules>
 
     <name>rpc-framework</name>
@@ -37,6 +35,9 @@
         <curator-recipes.version>4.2.0</curator-recipes.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <hessian.version>4.0.63</hessian.version>
+        <lombok.version>1.18.22</lombok.version>
+        <logback-classic.version>1.2.3</logback-classic.version>
     </properties>
 
 </project>

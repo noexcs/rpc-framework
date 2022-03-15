@@ -28,6 +28,9 @@ public class SpringContextConfig {
     @Value("${server.port}")
     private int port;
 
+    @Value("${serializerClass}")
+    private String serializerClass;
+
     @Value("${registry.serviceName}")
     private String serviceName;
 
