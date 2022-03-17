@@ -182,6 +182,13 @@ public class Config {
         return 8848;
     }
 
+    public static Integer getTimedOut() {
+        return timedOut;
+    }
+
+    public static Integer getRetries() {
+        return retries;
+    }
 
     public static String getServiceName() {
         return serviceName;

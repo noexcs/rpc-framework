@@ -3,6 +3,7 @@ package org.noexcs;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
+import org.noexcs.config.Config;
 import org.noexcs.handler.ClientHandler;
 import org.noexcs.message.RpcRequestMessage;
 import org.noexcs.message.RpcResponseMessage;
@@ -37,15 +38,29 @@ public class RpcClientProxy extends ChannelInboundHandlerAdapter {
             ClientHandler.RcpResponses.put(sequenceId, future);
             channel.writeAndFlush(rpcRequestMessage);
 
-            RpcResponseMessage response;
-            try {
-                response = future.get(3, TimeUnit.SECONDS);
-            } catch (TimeoutException e) {
-                log.info("rpc request timed out: {}.{}", clazz.getName(), method.getName());
+            RpcResponseMessage response = null;
+            int retries = Config.getRetries();
+            int round = 0;
+            do {
+                try {
+                    round++;
+                    response = future.get(Config.getTimedOut(), TimeUnit.SECONDS);
+                    break;
+                } catch (TimeoutException e) {
+                    log.info("rpc request timed out: {}.{}", clazz.getName(), method.getName());
+                    if (round < retries) {
+                        log.info("Attempt No.{} request", round + 1);
+                    }
+                }
+            } while (round < retries);
+
+            RpcClient.setNextProviderAddress(channel);
+
+            if (response == null) {
+                log.info("Retries exhausted！");
                 return null;
             }
 
-            RpcClient.setNextProviderAddress(channel);
             if (response.getReturnValue() == null) {
                 log.error(response.getExceptionValue().getMessage());
                 return null;
