@@ -5,7 +5,7 @@
     <parent>
         <artifactId>rpc-framework</artifactId>
         <groupId>org.noexcs</groupId>
-        <version>1.0</version>
+        <version>1.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.noexcs</groupId>
             <artifactId>rpc-consumer-client</artifactId>
-            <version>1.0</version>
+            <version>1.5</version>
         </dependency>
     </dependencies>
 

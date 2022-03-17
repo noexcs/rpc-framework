@@ -10,7 +10,7 @@
     <parent>
         <artifactId>rpc-framework</artifactId>
         <groupId>org.noexcs</groupId>
-        <version>1.0</version>
+        <version>1.5</version>
     </parent>
 
     <name>provider</name>

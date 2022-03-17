@@ -7,7 +7,7 @@
     <groupId>org.noexcs</groupId>
     <artifactId>rpc-framework</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>1.5</version>
     <modules>
         <module>provider-server</module>
         <module>consumer-client</module>
@@ -21,7 +21,7 @@
     <url>https://gitee.com/li-jinbao/rpc-framework</url>
 
     <properties>
-        <noexcs.rpc.version>1.0</noexcs.rpc.version>
+        <noexcs.rpc.version>1.5</noexcs.rpc.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
