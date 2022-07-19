@@ -58,6 +58,7 @@ public class RpcClientProxy extends ChannelInboundHandlerAdapter {
 
             if (response == null) {
                 log.info("Retries exhausted！");
+                ClientHandler.RcpResponses.remove(sequenceId);
                 return null;
             }
 

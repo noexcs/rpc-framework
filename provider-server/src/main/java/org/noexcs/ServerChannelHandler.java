@@ -32,6 +32,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<RpcMessage
         try {
             Object serviceImpl = ServiceContainer.getServiceImpl(clazz);
             Method method = clazz.getDeclaredMethod(requestMessage.getMethodName(), requestMessage.getParameterTypes());
+
             method.setAccessible(true);
             result = method.invoke(serviceImpl, requestMessage.getParameterValue());
             responseMessage.setReturnValue(result);
