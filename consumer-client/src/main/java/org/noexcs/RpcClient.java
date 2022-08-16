@@ -6,21 +6,21 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.noexcs.registry.ServiceDiscover;
-import org.noexcs.registry.nacos.NacosServiceDiscoverImpl;
 import org.noexcs.codec.RpcMessageCodec;
 import org.noexcs.config.Config;
 import org.noexcs.handler.ClientHandler;
 import org.noexcs.loadBalance.AbstractLoadBalance;
 import org.noexcs.loadBalance.impl.RandomBalance;
+import org.noexcs.registry.ServiceDiscover;
+import org.noexcs.registry.nacos.NacosServiceDiscoverImpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -30,29 +30,41 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Slf4j
 public class RpcClient {
 
-    private static volatile Channel channel;
+    private volatile Channel channel;
 
-    private static String HOST;
+    @Setter
+    private String HOST;
 
-    private static int PORT;
+    @Setter
+    private int PORT;
 
-    private static AbstractLoadBalance LOAD_BALANCE = null;
+    @Setter
+    private AbstractLoadBalance LOAD_BALANCE = null;
 
-    private static ServiceDiscover SERVICE_DISCOVER = null;
+    private ServiceDiscover SERVICE_DISCOVER = null;
 
-    private static String SERVICE_NAME;
+    @Setter
+    private String SERVICE_NAME;
 
-    private static final ThreadLocal<Channel> CHANNEL_THREAD_LOCAL = new ThreadLocal<>();
+    private final ThreadLocal<Channel> CHANNEL_THREAD_LOCAL = new ThreadLocal<>();
 
-    private static final ReadWriteLock READ_WRITE_LOCK = new ReentrantReadWriteLock();
+    private final ReadWriteLock READ_WRITE_LOCK = new ReentrantReadWriteLock();
 
-    private static final ReentrantReadWriteLock.ReadLock READ_LOCK = (ReentrantReadWriteLock.ReadLock) READ_WRITE_LOCK.readLock();
+    private final ReentrantReadWriteLock.ReadLock READ_LOCK = (ReentrantReadWriteLock.ReadLock) READ_WRITE_LOCK.readLock();
 
-    private static final ReentrantReadWriteLock.WriteLock WRITE_LOCK = (ReentrantReadWriteLock.WriteLock) READ_WRITE_LOCK.writeLock();
+    private final ReentrantReadWriteLock.WriteLock WRITE_LOCK = (ReentrantReadWriteLock.WriteLock) READ_WRITE_LOCK.writeLock();
 
-    private static List<InetSocketAddress> cachedServerList;
+    private List<InetSocketAddress> cachedServerList;
 
-    static {
+    public RpcClient(String HOST, int PORT) {
+        this.HOST = HOST;
+        this.PORT = PORT;
+    }
+
+    public RpcClient() {
+    }
+
+    {
         if (Config.getHasRegistry()) {
             try {
                 Class<?> loadBalanceClazz = Class.forName(Config.getLoadBalanceType());
@@ -83,22 +95,22 @@ public class RpcClient {
         }
     }
 
-    public static Channel getChannel() {
+    public Channel getChannel() {
         if (Config.getHasRegistry()) {
             return initChannel();
         } else {
-            if (RpcClient.channel == null) {
-                synchronized (RpcClient.class) {
-                    if (RpcClient.channel == null) {
+            if (this.channel == null) {
+                synchronized (this) {
+                    if (this.channel == null) {
                         channel = initChannel();
                     }
                 }
             }
-            return RpcClient.channel;
+            return channel;
         }
     }
 
-    private static Channel initChannel() {
+    private Channel initChannel() {
         READ_LOCK.lock();
         try {
             NioEventLoopGroup group = new NioEventLoopGroup();
@@ -133,7 +145,7 @@ public class RpcClient {
     /**
      * Reset or init the connection that had completed a rpc call just now when registry center exists and select next rpc provider address for next rpc call.
      */
-    public static void setNextProviderAddress(Channel channel) {
+    public void setNextProviderAddress(Channel channel) {
         if (Config.getHasRegistry()) {
             WRITE_LOCK.lock();
             try {
