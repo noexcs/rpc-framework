@@ -36,14 +36,13 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<RpcMessage
             method.setAccessible(true);
             result = method.invoke(serviceImpl, requestMessage.getParameterValue());
             responseMessage.setReturnValue(result);
-            log.info("Received a rpc call: {}#{} {}", className, requestMessage.getMethodName(), remoteAddress);
+            log.info("Received a rpc call: {}#{} from {}", className, requestMessage.getMethodName(), remoteAddress);
         } catch (NoSuchMethodException | SecurityException | InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
             e.printStackTrace();
             responseMessage.setExceptionValue(new Exception(e.getMessage()));
         }
         ctx.channel().writeAndFlush(responseMessage);
         log.info("Returned {}", responseMessage);
-        System.out.println(responseMessage);
     }
 
     @Override

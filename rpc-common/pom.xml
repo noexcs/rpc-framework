@@ -13,7 +13,7 @@
     <version>${noexcs.rpc.version}</version>
 
     <name>rpc-common</name>
-    <url>https://gitee.com/li-jinbao/rpc-framework</url>
+    <url>https://github.com/noexcs/rpc-framework</url>
 
     <dependencies>
         <dependency>

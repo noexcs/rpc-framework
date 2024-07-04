@@ -1,27 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>rpc-consumer-client</artifactId>
-  <version>${noexcs.rpc.version}</version>
+    <artifactId>rpc-consumer-client</artifactId>
+    <version>${noexcs.rpc.version}</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-  <parent>
-    <artifactId>rpc-framework</artifactId>
-    <groupId>org.noexcs</groupId>
-    <version>1.5</version>
-  </parent>
+    <parent>
+        <artifactId>rpc-framework</artifactId>
+        <groupId>org.noexcs</groupId>
+        <version>1.5</version>
+    </parent>
 
-  <name>consumer</name>
-  <url>https://gitee.com/li-jinbao/rpc-framework</url>
+    <name>consumer</name>
+    <url>https://github.com/noexcs/rpc-framework</url>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.noexcs</groupId>
-      <artifactId>rpc-common</artifactId>
-      <version>${noexcs.rpc.version}</version>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.noexcs</groupId>
+            <artifactId>rpc-common</artifactId>
+            <version>${noexcs.rpc.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

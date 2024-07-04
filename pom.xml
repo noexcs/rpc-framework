@@ -18,7 +18,7 @@
     </modules>
 
     <name>rpc-framework</name>
-    <url>https://gitee.com/li-jinbao/rpc-framework</url>
+    <url>https://github.com/noexcs/rpc-framework</url>
 
     <properties>
         <noexcs.rpc.version>1.5</noexcs.rpc.version>

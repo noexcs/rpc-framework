@@ -1,5 +1,6 @@
 package org.noexcs.config;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.noexcs.codec.Impl.HessianSerializer;
 import org.noexcs.codec.Serializer;
@@ -22,47 +23,36 @@ public class Config {
 
     static Map<String, Object> configs;
 
-    static Boolean hasRegistry;
+    @Getter
+    static Boolean hasRegistryCenter;
 
+    @Getter
     static String registryType;
 
     static String registryServer;
 
     static Integer registryServerPort;
 
+    @Getter
     static String loadBalanceType;
 
+    @Getter
     static String serviceName;
 
+    @Getter
     static String providerServer;
 
+    @Getter
     static Integer providerPort;
 
+    @Getter
     static Integer timedOut;
 
+    @Getter
     static Integer retries;
 
+    @Getter
     static Serializer serializer;
-
-    public static Boolean getHasRegistry() {
-        return hasRegistry;
-    }
-
-    public static String getRegistryType() {
-        return registryType;
-    }
-
-    public static String getLoadBalanceType() {
-        return loadBalanceType;
-    }
-
-    public static String getProviderServer() {
-        return providerServer;
-    }
-
-    public static Integer getProviderPort() {
-        return providerPort;
-    }
 
     static {
         try (InputStream inputStream = Config.class.getClassLoader().getResourceAsStream("rpc-consumer-config.yml")) {
@@ -107,7 +97,7 @@ public class Config {
 
             if (registryMap != null && registryMap.get("enabled") != null && ((Boolean) registryMap.get("enabled"))) {
                 //<editor-fold desc="If registry enabled">
-                hasRegistry = true;
+                hasRegistryCenter = true;
                 log.debug("Service registry and discover enabled.");
                 registryType = (String) registryMap.get("type");
                 registryServer = (String) registryMap.get("server");
@@ -124,7 +114,7 @@ public class Config {
                     log.debug("load balancer is {} by default", loadBalanceType);
                 }
                 if (registryServer == null || registryServerPort == null || serviceName == null) {
-                    hasRegistry = false;
+                    hasRegistryCenter = false;
                     log.debug("Fail to load registry center configurations!");
                     if (registryServer == null) {
                         registryServer = "127.0.0.1";
@@ -142,7 +132,7 @@ public class Config {
                 //</editor-fold>
             } else {
                 //<editor-fold desc="If registry not enabled">
-                hasRegistry = false;
+                hasRegistryCenter = false;
                 log.debug("Straightforward rpc call without registry mode enabled.");
                 Map provider = (Map) configs.get("provider");
                 if (provider == null) {
@@ -180,22 +170,6 @@ public class Config {
             return registryServerPort;
         }
         return 8848;
-    }
-
-    public static Integer getTimedOut() {
-        return timedOut;
-    }
-
-    public static Integer getRetries() {
-        return retries;
-    }
-
-    public static String getServiceName() {
-        return serviceName;
-    }
-
-    public static Serializer getSerializer() {
-        return serializer;
     }
 
     /**

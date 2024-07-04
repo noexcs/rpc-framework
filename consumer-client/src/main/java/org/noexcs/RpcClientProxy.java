@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class RpcClientProxy extends ChannelInboundHandlerAdapter {
 
-    private final AtomicInteger ID = new AtomicInteger();
+    private final AtomicInteger requestIdGenerator = new AtomicInteger();
 
     private RpcClient rpcClient;
 
@@ -41,16 +41,22 @@ public class RpcClientProxy extends ChannelInboundHandlerAdapter {
         T proxyInstance = (T) map.get(clazz);
         if (proxyInstance == null) {
             synchronized (this) {
+                // Double check.
+                proxyInstance = (T) map.get(clazz);
                 if (proxyInstance == null) {
                     proxyInstance = (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{clazz}, (proxy, method, args) -> {
-                        int sequenceId = ID.getAndIncrement();
+
+                        // Construct RequestMessage.
+                        int sequenceId = requestIdGenerator.getAndIncrement();
                         RpcRequestMessage rpcRequestMessage = new RpcRequestMessage(sequenceId, clazz.getName(), method.getName(), method.getReturnType(), method.getParameterTypes(), args);
 
+                        // Get the rpc server connection.
                         Channel channel = rpcClient.getChannel();
                         CompletableFuture<RpcResponseMessage> future = new CompletableFuture<>();
                         ClientHandler.RcpResponses.put(sequenceId, future);
                         channel.writeAndFlush(rpcRequestMessage);
 
+                        // Get server ResponseMessage from a CompletableFuture object.
                         RpcResponseMessage response = null;
                         int retries = Config.getRetries();
                         int round = 0;
@@ -61,16 +67,17 @@ public class RpcClientProxy extends ChannelInboundHandlerAdapter {
                                 break;
                             } catch (TimeoutException e) {
                                 log.info("rpc request timed out: {}.{}", clazz.getName(), method.getName());
-                                if (round < retries) {
+                                if (round + 1 <= retries) {
                                     log.info("Attempt No.{} request", round + 1);
                                 }
                             }
                         } while (round < retries);
 
+                        // For load balance.
                         rpcClient.setNextProviderAddress(channel);
 
                         if (response == null) {
-                            log.info("Retries exhausted！");
+                            log.info("Rpc call failed after {} retries.", retries);
                             ClientHandler.RcpResponses.remove(sequenceId);
                             return null;
                         }
@@ -81,9 +88,9 @@ public class RpcClientProxy extends ChannelInboundHandlerAdapter {
                         }
                         return response.getReturnValue();
                     });
+                    map.put(clazz, proxyInstance);
                 }
             }
-            map.put(clazz, proxyInstance);
         }
         return proxyInstance;
     }

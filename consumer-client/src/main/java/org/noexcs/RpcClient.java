@@ -65,7 +65,7 @@ public class RpcClient {
     }
 
     {
-        if (Config.getHasRegistry()) {
+        if (Config.getHasRegistryCenter()) {
             try {
                 Class<?> loadBalanceClazz = Class.forName(Config.getLoadBalanceType());
                 LOAD_BALANCE = (AbstractLoadBalance) loadBalanceClazz.getDeclaredConstructor().newInstance();
@@ -96,7 +96,9 @@ public class RpcClient {
     }
 
     public Channel getChannel() {
-        if (Config.getHasRegistry()) {
+        if (Config.getHasRegistryCenter()) {
+            // If it has a registry center,
+            // every rpc call should use a different server.
             return initChannel();
         } else {
             if (this.channel == null) {
@@ -110,6 +112,9 @@ public class RpcClient {
         }
     }
 
+    /**
+     * Establish connection to rpc server.
+     */
     private Channel initChannel() {
         READ_LOCK.lock();
         try {
@@ -143,15 +148,14 @@ public class RpcClient {
     }
 
     /**
-     * Reset or init the connection that had completed a rpc call just now when registry center exists and select next rpc provider address for next rpc call.
+     * When registry center exists, it'll be invoked after every rpc call to perform load balance.
      */
     public void setNextProviderAddress(Channel channel) {
-        if (Config.getHasRegistry()) {
+        if (Config.getHasRegistryCenter()) {
             WRITE_LOCK.lock();
             try {
                 if (channel != null) {
                     channel.close();
-                    channel = null;
                 }
                 InetSocketAddress address = LOAD_BALANCE.doSelect(cachedServerList);
                 HOST = address.getHostString();

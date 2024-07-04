@@ -6,6 +6,18 @@
 
     <artifactId>rpc-provider-server</artifactId>
     <version>${noexcs.rpc.version}</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <parent>
         <artifactId>rpc-framework</artifactId>
@@ -14,7 +26,7 @@
     </parent>
 
     <name>provider</name>
-    <url>https://gitee.com/li-jinbao/rpc-framework</url>
+    <url>https://github.com/noexcs/rpc-framework</url>
 
     <dependencies>
         <dependency>

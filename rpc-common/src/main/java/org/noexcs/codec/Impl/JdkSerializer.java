@@ -9,11 +9,15 @@ import java.io.*;
  * @since 3/15/2022 6:02 PM
  */
 public class JdkSerializer implements Serializer {
+
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T deserialize(Class<T> clazz, byte[] bytes) {
         try {
             ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
-            return (T) ois.readObject();
+            T obj =  (T) ois.readObject();
+            ois.close();
+            return obj;
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException("反序列化失败", e);
         }

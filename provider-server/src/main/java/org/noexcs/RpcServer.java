@@ -21,11 +21,16 @@ import java.util.concurrent.Executors;
 
 /**
  * Hello world!
+ *
  * @author noexcs
  */
 @Slf4j
 public class RpcServer {
 
+    /**
+     *  Scan the basePackage of mainClass, and register every class
+     *  that annotated with spring component annotation such as {@code @Service}.
+     */
     public static void start(Class<?> mainClass) {
         String basePackage = mainClass.getPackage().getName();
         log.debug("rpc server starting...");
@@ -35,6 +40,10 @@ public class RpcServer {
         new RpcServer().run(contextConfig.getHost(), contextConfig.getPort());
     }
 
+    /**
+     *  Scan the basePackage of mainClass, and register every class
+     *  that annotated with spring component annotation such as {@code @Service}.
+     */
     public static void startBackground(Class<?> mainClass, boolean daemon) {
         String basePackage = mainClass.getPackage().getName();
         ServiceContainer.initApplicationContext(basePackage);
@@ -68,8 +77,9 @@ public class RpcServer {
                     });
 
             ChannelFuture channelFuture = b.bind(host, port).sync();
-            log.info("rpc server started at {}:{}!", host, port);
+            log.info("rpc server started at {}:{}.", host, port);
 
+            // Find service name and register to nacos.
             SpringContextConfig contextConfig = ServiceContainer.getApplicationContext().getBean(SpringContextConfig.class);
             Boolean registryEnabled = contextConfig.getRegistryEnabled();
             if (registryEnabled != null && registryEnabled) {
@@ -82,7 +92,9 @@ public class RpcServer {
                 Integer registryServerPort = contextConfig.getRegistryServerPort();
                 InetSocketAddress inetSocketAddress = new InetSocketAddress(host, port);
                 if (new NacosServiceRegistryImpl(registryServer, registryServerPort).registerService(serviceName, inetSocketAddress)) {
-                    log.debug("rpc service has been registered to {} [{}:{}]", "nacos", registryServer, registryServerPort);
+                    log.debug("rpc service {} has been registered to nacos [{}:{}]", serviceName, registryServer, registryServerPort);
+                } else {
+                    log.debug("rpc service {} failed to register to nacos [{}:{}].", serviceName, registryServer, registryServerPort);
                 }
             }
 
